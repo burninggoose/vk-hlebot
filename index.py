@@ -38,7 +38,7 @@ def main():
                         # Берем метку времени прошлой погоды
                         ts = int(w.get_reference_time('unix'))
                         # Смотрим не прошло ли полчаса
-                        if (ts - datetime.now().timestamp() > 1800):
+                        if (ts - datetime.now().timestamp() > 3600):
                             # Получаем погоду заново если да
                             w = observation.get_weather()
                             ts = int(w.get_reference_time('unix'))
