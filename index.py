@@ -2,6 +2,7 @@ import vk_api
 import random
 import os
 from vk_api.longpoll import VkLongPoll, VkEventType
+import atexit
 
 
 def main():
@@ -12,6 +13,12 @@ def main():
 
    # vk.messages.send(
     #    chat_id=10, message='Бот хлеба: Выпускаем кракена')
+
+    def exit_handler():
+        vk.messages.send(
+            chat_id=10, message='Хлебот: ' + 'я выключился или крашнулся')
+
+    atexit.register(exit_handler)
 
     for event in longpoll.listen():
         if hasattr(event, 'type'):
