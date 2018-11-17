@@ -30,23 +30,22 @@ def main():
         if hasattr(event, 'type'):
             if event.type == VkEventType.MESSAGE_NEW:
                 if event.from_chat:
-                    if (event.chat_id == 10):
-                        if (event.text == '!флип'):
-                            # Кидаем монетку
-                            vk.messages.send(
-                                chat_id=10, message='Хлебот: ' + random.choice(['Орел', 'Решка']))
-                        if (event.text == '!погода'):
-                            # Берем метку времени прошлой погоды
+                    if (event.text == '!флип'):
+                        # Кидаем монетку
+                        vk.messages.send(
+                            chat_id=event.chat_id, message='Хлебот: ' + random.choice(['Орел', 'Решка']))
+                    if (event.text == '!погода'):
+                        # Берем метку времени прошлой погоды
+                        ts = int(w.get_reference_time('unix'))
+                        # Смотрим не прошло ли полчаса
+                        if (ts - datetime.now().timestamp() > 1800):
+                            # Получаем погоду заново если да
+                            w = observation.get_weather()
                             ts = int(w.get_reference_time('unix'))
-                            # Смотрим не прошло ли полчаса
-                            if (ts - datetime.now().timestamp() > 1800):
-                                # Получаем погоду заново если да
-                                w = observation.get_weather()
-                                ts = int(w.get_reference_time('unix'))
-                            # Отправляем
-                            vk.messages.send(chat_id=10, message='Хлебот: ' + 'сейчас в Москве %d°C. Последнее обновление: %s' % (
-                                round(w.get_temperature('celsius')['temp']), datetime.utcfromtimestamp(
-                                    ts + 10800).strftime('%H:%M')))
+                        # Отправляем
+                        vk.messages.send(chat_id=event.chat_id, message='Хлебот: ' + 'сейчас в Москве %d°C. Последнее обновление: %s' % (
+                            round(w.get_temperature('celsius')['temp']), datetime.utcfromtimestamp(
+                                ts + 10800).strftime('%H:%M')))
 
 
 if __name__ == '__main__':
