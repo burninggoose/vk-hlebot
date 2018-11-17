@@ -30,11 +30,11 @@ def main():
         if hasattr(event, 'type'):
             if event.type == VkEventType.MESSAGE_NEW:
                 if event.from_chat:
-                    if (event.text == '!флип'):
+                    if (event.text.lower() == '!флип'):
                         # Кидаем монетку
                         vk.messages.send(
                             chat_id=event.chat_id, message='Хлебот: ' + random.choice(['Орел', 'Решка']))
-                    if (event.text == '!погода'):
+                    if (event.text.lower() == '!погода'):
                         # Берем метку времени прошлой погоды
                         ts = int(w.get_reference_time('unix'))
                         # Смотрим не прошло ли полчаса
