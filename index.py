@@ -48,7 +48,10 @@ def main():
                                 vk.messages.send(chat_id=event.chat_id, message='Хлебот: ' + 'сейчас в Москве %d°C. Последнее обновление: %s' % (
                                     round(w.get_temperature('celsius')['temp']), datetime.utcfromtimestamp(
                                         ts + 10800).strftime('%H:%M')))
-        except AttributeError:
+                            if (event.text.lower() == '!команды' or event.text.lower() == '!помощь'):
+                                # Отправляем команды
+                                vk.messages.send(
+                                    chat_id=event.chat_id, message='Команды Хлебота:\n!погода - Погда в Москве на текущий момент\n!флип - подкидывание монетки')
             print('error')
 
 
