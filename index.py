@@ -51,7 +51,8 @@ def main():
                             if (event.text.lower() == '!команды' or event.text.lower() == '!помощь'):
                                 # Отправляем команды
                                 vk.messages.send(
-                                    chat_id=event.chat_id, message='Команды Хлебота:\n!погода - Погда в Москве на текущий момент\n!флип - подкидывание монетки')
+                                    chat_id=event.chat_id, message='Команды Хлебота:\n!погода - Погда в Москве на текущий момент\nФлип - подкидывание монетки\n!помощь или !команды - эта документация')
+        except AttributeError:
             print('error')
 
 
