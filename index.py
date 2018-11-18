@@ -7,6 +7,27 @@ import pyowm
 from datetime import datetime
 
 
+def degree_to_text(degree):
+    if (degree > 0.0 and degree <= 22.5):
+        return 'северный'
+    if (degree > 22.5 and degree <= 67.5):
+        return 'северо-восточный'
+    if (degree > 67.5 and degree <= 112.5):
+        return 'восточный'
+    if (degree > 112.5 and degree <= 157.5):
+        return 'юго-восточный'
+    if (degree > 157.5 and degree <= 202.5):
+        return 'южный'
+    if (degree > 202.5 and degree <= 247.5):
+        return 'юго-западный'
+    if (degree > 247.5 and degree <= 292.5):
+        return 'западный'
+    if (degree > 292.5 and degree <= 337.5):
+        return 'северо-западный'
+    if (degree > 337.5 and degree <= 0.0):
+        return 'северный'
+
+
 def main():
     # Инициализируем vk_api
     vk_session = vk_api.VkApi(
@@ -18,6 +39,7 @@ def main():
     owm = pyowm.OWM(os.environ['OWM_TOKEN'])
     observation = owm.weather_at_id(524901)
     w = observation.get_weather()
+    wind = w.get_wind()
 
     # Ловим все выходы
     def exit_handler():
@@ -42,10 +64,11 @@ def main():
                             # Получаем погоду заново если да
                             observation = owm.weather_at_id(524901)
                             w = observation.get_weather()
+                            wind = w.get_wind()
                             ts = int(w.get_reference_time('unix'))
                         # Отправляем
-                        vk.messages.send(chat_id=event.chat_id, message='Хлебот: ' + 'сейчас в Москве %d°C. Последнее обновление: %s' % (
-                            round(w.get_temperature('celsius')['temp']), datetime.utcfromtimestamp(
+                        vk.messages.send(chat_id=event.chat_id, message='Хлебот:\nСейчас в Москве %d°C.\nВетер %s, %dм/сек\nПоследнее обновление: %s' % (
+                            round(w.get_temperature('celsius')['temp']), degree_to_text(wind['deg']), wind['speed'], datetime.utcfromtimestamp(
                                 ts + 10800).strftime('%H:%M')))
                     if (event.text.lower() == '!команды' or event.text.lower() == '!помощь'):
                         # Отправляем команды
