@@ -101,9 +101,7 @@ def main():
                                 ts + 10800).strftime('%H:%M')))
                     if (event.text.lower() == '!курс'):
                         # Смотрим не прошли ли 5 минут
-                        print(datetime.now().timestamp() -
-                              data['metadata']['timestamp'])
-                        if (datetime.now().timestamp() - datatimestamp > 300):
+                        if (datetime.now().timestamp() - datatimestamp > 60):
                             data = coinmarketcap.ticker(
                                 start=0, limit=10, convert='USD')
                             datatimestamp = datetime.now().timestamp()
@@ -111,7 +109,7 @@ def main():
                                 data))
                         else:
                             vk.messages.send(
-                                chat_id=event.chat_id, message='Хлебот: команду !курс можно использовать раз в 5 минут')
+                                chat_id=event.chat_id, message='Хлебот: команду !курс можно использовать раз в минуту')
                     if (event.text.lower() == '!команды' or event.text.lower() == '!помощь'):
                         # Отправляем команды
                         vk.messages.send(
