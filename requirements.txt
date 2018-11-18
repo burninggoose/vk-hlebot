@@ -1,2 +1,3 @@
-vk_api==11.2.1
+#vk_api==11.2.1
+git+git://github.com/python273/vk_api.git
 pyowm==2.9.0
