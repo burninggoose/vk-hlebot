@@ -30,7 +30,6 @@ def main():
         if hasattr(event, 'type'):
             if event.type == VkEventType.MESSAGE_NEW:
                 if event.from_chat:
-                    if (event.)
                     if (event.text.lower() == '!флип'):
                         # Кидаем монетку
                         vk.messages.send(
