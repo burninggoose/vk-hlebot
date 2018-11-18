@@ -23,13 +23,14 @@ def main():
     def exit_handler():
         vk.messages.send(
             chat_id=10, message='Хлебот: ' + 'я выключился или крашнулся')
-    #atexit.register(exit_handler)
+    atexit.register(exit_handler)
 
     # Начинаем слушать longpoll
     for event in longpoll.listen():
         if hasattr(event, 'type'):
             if event.type == VkEventType.MESSAGE_NEW:
                 if event.from_chat:
+                    if (event.)
                     if (event.text.lower() == '!флип'):
                         # Кидаем монетку
                         vk.messages.send(
@@ -40,6 +41,7 @@ def main():
                         # Смотрим не прошло ли полчаса
                         if (datetime.now().timestamp() - ts > 3600):
                             # Получаем погоду заново если да
+                            observation = owm.weather_at_id(524901)
                             w = observation.get_weather()
                             ts = int(w.get_reference_time('unix'))
                         # Отправляем
