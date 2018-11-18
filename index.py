@@ -5,6 +5,7 @@ from vk_api.longpoll import VkLongPoll, VkEventType
 import atexit
 import pyowm
 from datetime import datetime
+from coinmarketcap import Market
 
 
 def degree_to_text(degree):
@@ -28,6 +29,28 @@ def degree_to_text(degree):
         return 'северный'
 
 
+def decide_emoji(percent):
+    if (percent > 0):
+        return '📈'
+    return '📉'
+
+
+def parse_price(data):
+    string = '%d. %s (%s) → %.2f USD (%.2f%%) %s\n' % (data['rank'], data['name'], data['symbol'],
+                                                       data['quotes']['USD']['price'], data['quotes']['USD']['percent_change_24h'], decide_emoji(
+        data['quotes']['USD']['percent_change_24h']))
+    return string
+
+
+def parse_prices(data):
+    string = ''
+    for i in data['data']:
+        string += parse_price(data['data'][i])
+    string += 'Последнее обновление: %s\n' % datetime.utcfromtimestamp(
+        data['metadata']['timestamp'] + 10800).strftime('%H:%M')
+    return string
+
+
 def main():
     # Инициализируем vk_api
     vk_session = vk_api.VkApi(
@@ -41,11 +64,17 @@ def main():
     w = observation.get_weather()
     wind = w.get_wind()
 
+    # Получаем данные крипты
+    coinmarketcap = Market()
+    data = coinmarketcap.ticker(
+        start=0, limit=10, convert='USD')
+    datatimestamp = 0
     # Ловим все выходы
+
     def exit_handler():
         vk.messages.send(
             chat_id=10, message='Хлебот: ' + 'я выключился или крашнулся')
-    atexit.register(exit_handler)
+    # atexit.register(exit_handler)
 
     # Начинаем слушать longpoll
     for event in longpoll.listen():
@@ -67,13 +96,26 @@ def main():
                             wind = w.get_wind()
                             ts = int(w.get_reference_time('unix'))
                         # Отправляем
-                        vk.messages.send(chat_id=event.chat_id, message='Хлебот:\nСейчас в Москве: %d°C\nВетер: %s, %dм/сек\nВлажность: %d%%\nПоследнее обновление: %s' % (
+                        vk.messages.send(chat_id=event.chat_id, message='Хлебот:\nСейчас в Москве: %d°C     \nВетер: %s, %dм/сек\nВлажность: %d%%\nПоследнее обновление: %s' % (
                             round(w.get_temperature('celsius')['temp']), degree_to_text(wind['deg']), wind['speed'], w.get_humidity(), datetime.utcfromtimestamp(
                                 ts + 10800).strftime('%H:%M')))
+                    if (event.text.lower() == '!курс'):
+                        # Смотрим не прошли ли 5 минут
+                        print(datetime.now().timestamp() -
+                              data['metadata']['timestamp'])
+                        if (datetime.now().timestamp() - datatimestamp > 300):
+                            data = coinmarketcap.ticker(
+                                start=0, limit=10, convert='USD')
+                            datatimestamp = datetime.now().timestamp()
+                            vk.messages.send(chat_id=event.chat_id, message='Хлебот:\n%s' % parse_prices(
+                                data))
+                        else:
+                            vk.messages.send(
+                                chat_id=event.chat_id, message='Хлебот: команду !курс можно использовать раз в 5 минут')
                     if (event.text.lower() == '!команды' or event.text.lower() == '!помощь'):
                         # Отправляем команды
                         vk.messages.send(
-                            chat_id=event.chat_id, message='Команды Хлебота:\n!погода - Погда в Москве на текущий момент\n!флип - подкидывание монетки\n!помощь или !команды - эта документация')
+                            chat_id=event.chat_id, message='Команды Хлебота:\n!погода - Погда в Москве на текущий момент\n!флип - подкидывание монетки\n!курс - состояние топ-10 криптовалют\n!помощь или !команды - эта документация')
 
 
 if __name__ == '__main__':
