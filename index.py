@@ -69,12 +69,12 @@ def main():
     data = coinmarketcap.ticker(
         start=0, limit=10, convert='USD')
     datatimestamp = 0
-    # Ловим все выходы
 
+    # Ловим все выходы
     def exit_handler():
         vk.messages.send(
             chat_id=10, message='Хлебот: ' + 'я выключился или крашнулся')
-    # atexit.register(exit_handler)
+    atexit.register(exit_handler)
 
     # Начинаем слушать longpoll
     for event in longpoll.listen():
