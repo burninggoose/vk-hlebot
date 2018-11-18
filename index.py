@@ -67,8 +67,8 @@ def main():
                             wind = w.get_wind()
                             ts = int(w.get_reference_time('unix'))
                         # Отправляем
-                        vk.messages.send(chat_id=event.chat_id, message='Хлебот:\nСейчас в Москве %d°C.\nВетер %s, %dм/сек\nПоследнее обновление: %s' % (
-                            round(w.get_temperature('celsius')['temp']), degree_to_text(wind['deg']), wind['speed'], datetime.utcfromtimestamp(
+                        vk.messages.send(chat_id=event.chat_id, message='Хлебот:\nСейчас в Москве: %d°C\nВетер: %s, %dм/сек\nВлажность: %d%%\nПоследнее обновление: %s' % (
+                            round(w.get_temperature('celsius')['temp']), degree_to_text(wind['deg']), wind['speed'], w.get_humidity(), datetime.utcfromtimestamp(
                                 ts + 10800).strftime('%H:%M')))
                     if (event.text.lower() == '!команды' or event.text.lower() == '!помощь'):
                         # Отправляем команды
