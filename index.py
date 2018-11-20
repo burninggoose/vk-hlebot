@@ -6,6 +6,7 @@ import atexit
 import pyowm
 from datetime import datetime
 from coinmarketcap import Market
+import schedule
 
 
 def degree_to_text(degree):
@@ -59,7 +60,7 @@ def main():
     longpoll = VkLongPoll(vk_session)
 
     # Инициализируем погодный api
-    owm = pyowm.OWM(os.environ['OWM_TOKEN'])
+    owm = pyowm.OWM(os.environ['OWM_TOKEN'], language='ru')
     observation = owm.weather_at_id(524901)
     w = observation.get_weather()
     wind = w.get_wind()
@@ -70,7 +71,21 @@ def main():
         start=0, limit=10, convert='USD')
     datatimestamp = 0
 
+    def send_morning():
+        forecast = owm.three_hours_forecast('Moscow,RU')
+        fc9 = forecast.get_weather_at(int(datetime.now().timestamp()) + 3600)
+        fc13 = forecast.get_weather_at(
+            int(datetime.now().timestamp()) + 3600 * 5)
+        fc18 = forecast.get_weather_at(
+            int(datetime.now().timestamp()) + 3600 * 9)
+        vk.messages.send(
+            chat_id=10, message='Хлебот:\nДоброе утро, чат!\nПрогноз погоды на день:\n9:00: %d°C, %s\n13:00: %d°C, %s\n18:00: %d°C, %s' % (
+                round(fc9.get_temperature('celsius')['temp']), fc9.get_detailed_status(), round(fc13.get_temperature('celsius')['temp']), fc13.get_detailed_status(), round(fc18.get_temperature('celsius')['temp']), fc18.get_detailed_status()))
+
+    schedule.every().day.at("5:21").do(send_morning)
+
     # Ловим все выходы
+
     def exit_handler():
         vk.messages.send(
             chat_id=10, message='Хлебот: ' + 'я выключился или крашнулся')
@@ -96,9 +111,11 @@ def main():
                             wind = w.get_wind()
                             ts = int(w.get_reference_time('unix'))
                         # Отправляем
-                        vk.messages.send(chat_id=event.chat_id, message='Хлебот:\nСейчас в Москве: %d°C     \nВетер: %s, %dм/сек\nВлажность: %d%%\nПоследнее обновление: %s' % (
-                            round(w.get_temperature('celsius')['temp']), degree_to_text(wind['deg']), wind['speed'], w.get_humidity(), datetime.utcfromtimestamp(
+                        vk.messages.send(chat_id=event.chat_id, message='Хлебот:\nСейчас в Москве: %d°C, %s\nВетер: %s, %dм/сек\nВлажность: %d%%\nПоследнее обновление: %s' % (
+                            round(w.get_temperature('celsius')['temp']), w.get_detailed_status(), degree_to_text(wind['deg']), wind['speed'], w.get_humidity(), datetime.utcfromtimestamp(
                                 ts + 10800).strftime('%H:%M')))
+                    if (event.text.lower() == '!утротест'):
+                        send_morning()
                     if (event.text.lower() == '!курс'):
                         # Смотрим не прошли ли 5 минут
                         if (datetime.now().timestamp() - datatimestamp > 60):
