@@ -114,8 +114,6 @@ def main():
                         vk.messages.send(chat_id=event.chat_id, message='Хлебот:\nСейчас в Москве: %d°C, %s\nВетер: %s, %dм/сек\nВлажность: %d%%\nПоследнее обновление: %s' % (
                             round(w.get_temperature('celsius')['temp']), w.get_detailed_status(), degree_to_text(wind['deg']), wind['speed'], w.get_humidity(), datetime.utcfromtimestamp(
                                 ts + 10800).strftime('%H:%M')))
-                    if (event.text.lower() == '!утротест'):
-                        send_morning()
                     if (event.text.lower() == '!курс'):
                         # Смотрим не прошли ли 5 минут
                         if (datetime.now().timestamp() - datatimestamp > 60):
