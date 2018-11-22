@@ -6,7 +6,6 @@ import atexit
 import pyowm
 from datetime import datetime
 from coinmarketcap import Market
-import schedule
 
 
 def degree_to_text(degree):
@@ -70,19 +69,6 @@ def main():
     data = coinmarketcap.ticker(
         start=0, limit=10, convert='USD')
     datatimestamp = 0
-
-    def send_morning():
-        forecast = owm.three_hours_forecast('Moscow,RU')
-        fc9 = forecast.get_weather_at(int(datetime.now().timestamp()) + 3600)
-        fc13 = forecast.get_weather_at(
-            int(datetime.now().timestamp()) + 3600 * 5)
-        fc18 = forecast.get_weather_at(
-            int(datetime.now().timestamp()) + 3600 * 9)
-        vk.messages.send(
-            chat_id=10, message='Хлебот:\nДоброе утро, чат!\nПрогноз погоды на день:\n9:00: %d°C, %s\n13:00: %d°C, %s\n18:00: %d°C, %s' % (
-                round(fc9.get_temperature('celsius')['temp']), fc9.get_detailed_status(), round(fc13.get_temperature('celsius')['temp']), fc13.get_detailed_status(), round(fc18.get_temperature('celsius')['temp']), fc18.get_detailed_status()))
-
-    schedule.every().day.at("5:21").do(send_morning)
 
     # Ловим все выходы
 
