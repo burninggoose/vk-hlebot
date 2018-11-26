@@ -72,14 +72,13 @@ def main():
 
     # Ловим все выходы
 
-    '''def exit_handler():
+    def exit_handler():
         vk.messages.send(
-            chat_id=10, message='Я выключился или крашнулся')
-    atexit.register(exit_handler)'''
+            peer_id=137425509, random_id=0, message='Я выключился или крашнулся')
+    atexit.register(exit_handler)
 
     # Начинаем слушать longpoll
     for event in longpoll.listen():
-        print(event.obj.peer_id)
         if hasattr(event, 'type'):
             if event.type == VkBotEventType.MESSAGE_NEW:
                 if (re.match(r'!флип', event.obj.text.lower())):

@@ -22,7 +22,7 @@ def send_morning():
     fc18 = forecast.get_weather_at(
         int(datetime.combine(date.today(), time(15, 00)).timestamp()))
     vk.messages.send(
-        chat_id=10, message='Хлебот:\nДоброе утро, чат!\nПрогноз погоды на день:\n9:00: %d°C, %s\n13:00: %d°C, %s\n18:00: %d°C, %s' % (
+        peer_id=2000000002, random_id=0, message='Доброе утро, чат!\nПрогноз погоды на день:\n9:00: %d°C, %s\n13:00: %d°C, %s\n18:00: %d°C, %s' % (
             round(fc9.get_temperature('celsius')['temp']), fc9.get_detailed_status(), round(fc13.get_temperature('celsius')['temp']), fc13.get_detailed_status(), round(fc18.get_temperature('celsius')['temp']), fc18.get_detailed_status()))
 
 
