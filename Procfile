@@ -1,2 +1,2 @@
-worker: python index.py
-worker2: python daily_forecast.py
+worker: python3 index.py
+worker2: python3 daily_forecast.py
