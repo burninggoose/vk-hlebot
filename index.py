@@ -72,10 +72,10 @@ def main():
 
     # Ловим все выходы
 
-    def exit_handler():
+    '''def exit_handler():
         vk.messages.send(
-            chat_id=10, message='Хлебот: ' + 'я выключился или крашнулся')
-    atexit.register(exit_handler)
+            chat_id=10, message='Я выключился или крашнулся')
+    atexit.register(exit_handler)'''
 
     # Начинаем слушать longpoll
     for event in longpoll.listen():
@@ -85,7 +85,7 @@ def main():
                 if (re.match(r'!флип', event.obj.text.lower())):
                     # Кидаем монетку
                     vk.messages.send(
-                        peer_id=event.obj.peer_id, random_id=event.obj.random_id, message='Хлебот: ' + random.choice(['Орел', 'Решка']))
+                        peer_id=event.obj.peer_id, random_id=event.obj.random_id, message=random.choice(['Орел', 'Решка']))
                 elif (re.match(r'!погода', event.obj.text.lower())):
                     # Берем метку времени прошлой погоды
                     ts = int(w.get_reference_time('unix'))
@@ -97,7 +97,7 @@ def main():
                         wind = w.get_wind()
                         ts = int(w.get_reference_time('unix'))
                     # Отправляем
-                    vk.messages.send(peer_id=event.obj.peer_id, random_id=event.obj.random_id, message='Хлебот:\nСейчас в Москве: %d°C, %s\nВетер: %s, %dм/сек\nВлажность: %d%%\nПоследнее обновление: %s' % (
+                    vk.messages.send(peer_id=event.obj.peer_id, random_id=event.obj.random_id, message='Сейчас в Москве: %d°C, %s\nВетер: %s, %dм/сек\nВлажность: %d%%\nПоследнее обновление: %s' % (
                         round(w.get_temperature('celsius')['temp']), w.get_detailed_status(), degree_to_text(wind['deg']), wind['speed'], w.get_humidity(), datetime.utcfromtimestamp(
                             ts + 10800).strftime('%H:%M')))
                 elif (re.match(r'!курс', event.obj.text.lower())):
@@ -106,11 +106,11 @@ def main():
                         data = coinmarketcap.ticker(
                             start=0, limit=10, convert='USD')
                         datatimestamp = datetime.now().timestamp()
-                        vk.messages.send(peer_id=event.obj.peer_id, random_id=event.obj.random_id, message='Хлебот:\n%s' % parse_prices(
+                        vk.messages.send(peer_id=event.obj.peer_id, random_id=event.obj.random_id, message='%s' % parse_prices(
                             data))
                     else:
                         vk.messages.send(
-                            peer_id=event.obj.peer_id, random_id=event.obj.random_id, message='Хлебот: команду !курс можно использовать раз в минуту')
+                            peer_id=event.obj.peer_id, random_id=event.obj.random_id, message='Команду !курс можно использовать раз в минуту')
                 elif ((re.match(r'!команды', event.obj.text.lower())) or (re.match(r'!помощь', event.obj.text.lower()))):
                     # Отправляем команды
                     vk.messages.send(
