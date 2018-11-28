@@ -112,6 +112,7 @@ def main():
                             peer_id=event.obj.peer_id, random_id=event.obj.random_id, message='Команду !курс можно использовать раз в минуту')
                 elif ((re.match(r'!команды', event.obj.text.lower())) or (re.match(r'!помощь', event.obj.text.lower()))):
                     # Отправляем команды
+
                     vk.messages.send(
                         peer_id=event.obj.peer_id, random_id=event.obj.random_id, message='Команды Хлебота:\n!погода - Погда в Москве на текущий момент\n!флип - подкидывание монетки\n!курс - состояние топ-10 криптовалют\n!помощь или !команды - эта документация')
 
